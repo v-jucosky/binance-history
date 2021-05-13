@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+    binance-history:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        container_name: binance-history
+        ports:
+            - 5500:5432
+        networks:
+            - postgres-network
+
+networks:
+    postgres-network:
+        external: true

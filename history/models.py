@@ -1,0 +1,57 @@
+from tortoise.models import Model
+from tortoise import fields
+
+
+class Symbol(Model):
+    id = fields.IntField(pk=True)
+
+    name = fields.CharField(max_length=20)
+    base_asset = fields.CharField(max_length=10)
+    base_asset_precision = fields.IntField()
+    quote_asset = fields.CharField(max_length=10)
+    quote_asset_precision = fields.IntField()
+    iceberg_allowed = fields.BooleanField()
+    oco_allowed = fields.BooleanField()
+    spot_trading_allowed = fields.BooleanField()
+    margin_trading_allowed = fields.BooleanField()
+
+    def __str__(self):
+        return self.name
+
+
+class KLine(Model):
+    id = fields.IntField(pk=True)
+    symbol = fields.ForeignKeyField(model_name='models.Symbol', related_name='klines')
+
+    trade_count = fields.IntField()
+    open_value = fields.DecimalField(max_digits=18, decimal_places=8)
+    high_value = fields.DecimalField(max_digits=18, decimal_places=8)
+    low_value = fields.DecimalField(max_digits=18, decimal_places=8)
+    close_value = fields.DecimalField(max_digits=18, decimal_places=8)
+    base_asset_volume = fields.DecimalField(max_digits=18, decimal_places=8)
+    base_asset_taker_buy_volume = fields.DecimalField(max_digits=18, decimal_places=8)
+    quote_asset_volume = fields.DecimalField(max_digits=18, decimal_places=8)
+    quote_asset_taker_buy_volume = fields.DecimalField(max_digits=18, decimal_places=8)
+
+    open_timestamp = fields.BigIntField()
+    close_timestamp = fields.BigIntField()
+
+    def __str__(self):
+        return self.id
+
+
+class Trade(Model):
+    id = fields.IntField(pk=True)
+    symbol = fields.ForeignKeyField(model_name='models.Symbol', related_name='trades')
+
+    number = fields.IntField()
+    value = fields.DecimalField(max_digits=18, decimal_places=8)
+    asset_quantity = fields.DecimalField(max_digits=18, decimal_places=8)
+    asset_price = fields.DecimalField(max_digits=18, decimal_places=8)
+    is_buyer_maker = fields.BooleanField()
+    is_best_match = fields.BooleanField()
+
+    trade_timestamp = fields.BigIntField()
+
+    def __str__(self):
+        return self.id
