@@ -1,4 +1,5 @@
 import aiofiles
+import logging
 
 
 from datetime import datetime, date, timedelta
@@ -11,6 +12,7 @@ from pathlib import Path
 class BaseEtl():
     def __init__(self, api: LoggedSession):
         self.api = api
+        self.logger = logging.getLogger(__name__)
 
     def get_date_object(self, timestamp: int):
         return datetime.fromtimestamp(timestamp / 1000).date()

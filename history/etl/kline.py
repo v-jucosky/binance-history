@@ -3,6 +3,7 @@ import aiofiles
 
 from tortoise.transactions import atomic
 from history.models import Symbol, KLine
+from tortoise.queryset import QuerySet
 from history.etl.base import BaseEtl
 from zipfile import ZipFile
 from pathlib import Path
@@ -40,8 +41,8 @@ class KLineEtl(BaseEtl):
 
         await KLine.bulk_create(klines, 10000)
 
-    async def run(self):
-        async for symbol in Symbol.all():
+    async def run(self, symbols: QuerySet):
+        async for symbol in symbols.all():
             last_kline = await KLine.filter(symbol=symbol).order_by('-open_timestamp').first()
 
             if last_kline:
@@ -61,3 +62,5 @@ class KLineEtl(BaseEtl):
 
                     await os.remove(f'./stage/{file}.zip')
                     await os.remove(f'./stage/{file}.csv')
+
+        self.logger.info('Sincronização dos dados dos gráficos candlestick concluída')

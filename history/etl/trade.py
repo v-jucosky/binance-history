@@ -3,6 +3,7 @@ import aiofiles
 
 from tortoise.transactions import atomic
 from history.models import Symbol, Trade
+from tortoise.queryset import QuerySet
 from history.etl.base import BaseEtl
 from zipfile import ZipFile
 from pathlib import Path
@@ -35,8 +36,8 @@ class TradeEtl(BaseEtl):
 
         await Trade.bulk_create(trades, 10000)
 
-    async def run(self):
-        async for symbol in Symbol.all():
+    async def run(self, symbols: QuerySet):
+        async for symbol in symbols.all():
             last_trade = await Trade.filter(symbol=symbol).order_by('-trade_timestamp').first()
 
             if last_trade:
@@ -56,3 +57,5 @@ class TradeEtl(BaseEtl):
 
                     await os.remove(f'./stage/{file}.zip')
                     await os.remove(f'./stage/{file}.csv')
+
+        self.logger.info('Sincronização das transações concluída')
