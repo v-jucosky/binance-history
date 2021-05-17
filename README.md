@@ -24,6 +24,7 @@ Argumentos suportados:
 
 * `kline`: sincronizar dados dos gráficos candlestick
 * `trade`: sincronizar transações
+* `aggtrade`: sincronizar transações agregadas
 
 Todas as execuções são incrementais (nenhum registro será duplicado) e os arquivos são processados dentro de transações.
 
@@ -32,3 +33,4 @@ Ao final da primeira execução, as seguintes tabelas terão sido criadas e carr
 * `symbol`: pares negociados
 * `kline`: dados dos gráficos candlestick, em intervalos de 1 minuto
 * `trade`: histórico de transações realizadas
+* `aggtrade`: histórico de transações agregadas realizadas
