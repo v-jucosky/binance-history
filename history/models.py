@@ -36,6 +36,9 @@ class KLine(Model):
     open_timestamp = fields.BigIntField()
     close_timestamp = fields.BigIntField()
 
+    class Meta:
+        unique_together = (('symbol', 'open_timestamp'), )
+
     def __str__(self):
         return self.id
 
@@ -51,7 +54,31 @@ class Trade(Model):
     is_buyer_maker = fields.BooleanField()
     is_best_match = fields.BooleanField()
 
-    trade_timestamp = fields.BigIntField()
+    timestamp = fields.BigIntField()
+
+    class Meta:
+        unique_together = (('symbol', 'number'), )
+
+    def __str__(self):
+        return self.id
+
+
+class AggTrade(Model):
+    id = fields.IntField(pk=True)
+    symbol = fields.ForeignKeyField(model_name='models.Symbol', related_name='aggtrades')
+
+    number = fields.IntField()
+    first_trade_number = fields.IntField()
+    last_trade_number = fields.IntField()
+    asset_quantity = fields.DecimalField(max_digits=18, decimal_places=8)
+    asset_price = fields.DecimalField(max_digits=18, decimal_places=8)
+    is_buyer_maker = fields.BooleanField()
+    is_best_match = fields.BooleanField()
+
+    timestamp = fields.BigIntField()
+
+    class Meta:
+        unique_together = (('symbol', 'number'), )
 
     def __str__(self):
         return self.id

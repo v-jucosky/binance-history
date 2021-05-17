@@ -4,6 +4,7 @@ import getopt
 import sys
 
 
+from history.etl.aggtrade import AggTradeEtl
 from history.session import LoggedSession
 from tortoise import Tortoise, run_async
 from history.etl.symbol import SymbolEtl
@@ -41,6 +42,10 @@ async def run(symbols: list, arguments: list):
             trade_etl = TradeEtl(api)
             tasks.append(asyncio.create_task(trade_etl.run(query)))
 
+        if 'aggtrade' in arguments:
+            aggtrade_etl = AggTradeEtl(api)
+            tasks.append(asyncio.create_task(aggtrade_etl.run(query)))
+
         for task in tasks:
             await task
 
@@ -62,7 +67,7 @@ if __name__ == '__main__':
             symbols.append(argument.upper())
 
     for argument in arguments:
-        if argument not in ('kline', 'trade'):
+        if argument not in ('kline', 'trade', 'aggtrade'):
             logger.error(f'Comando inválido: "{argument}"')
             exit()
 
