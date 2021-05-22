@@ -30,7 +30,7 @@ class TradeEtl(BaseEtl):
                     asset_price=data[1],
                     is_buyer_maker=data[5],
                     is_best_match=data[6],
-                    trade_timestamp=data[4]
+                    execution_timestamp=data[4]
                 )
             )
 
@@ -38,10 +38,10 @@ class TradeEtl(BaseEtl):
 
     async def run(self, symbols: QuerySet):
         async for symbol in symbols.all():
-            last_trade = await Trade.filter(symbol=symbol).order_by('-trade_timestamp').first()
+            last_trade = await Trade.filter(symbol=symbol).order_by('-execution_timestamp').first()
 
             if last_trade:
-                last_period = self.get_date_object(last_trade.trade_timestamp)
+                last_period = self.get_date_object(last_trade.execution_timestamp)
                 periods = self.generate_periods(last_period)
             else:
                 periods = self.generate_periods()

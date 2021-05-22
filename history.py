@@ -52,7 +52,7 @@ async def run(symbols: list, arguments: list):
 if __name__ == '__main__':
     logger = logging.getLogger('history')
     handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s [%(module)s] [%(levelname)s] %(message)s')
+    formatter = logging.Formatter('%(asctime)s [%(levelname)s] (%(module)s) %(message)s')
 
     logger.setLevel(logging.INFO)
     handler.setFormatter(formatter)

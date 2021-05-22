@@ -5,15 +5,18 @@ from tortoise import fields
 class Symbol(Model):
     id = fields.IntField(pk=True)
 
-    name = fields.CharField(max_length=20)
-    base_asset = fields.CharField(max_length=10)
+    name = fields.CharField(max_length=20, unique=True)
+    base_asset_name = fields.CharField(max_length=10)
     base_asset_precision = fields.IntField()
-    quote_asset = fields.CharField(max_length=10)
+    quote_asset_name = fields.CharField(max_length=10)
     quote_asset_precision = fields.IntField()
-    iceberg_allowed = fields.BooleanField()
-    oco_allowed = fields.BooleanField()
-    spot_trading_allowed = fields.BooleanField()
-    margin_trading_allowed = fields.BooleanField()
+    is_iceberg_allowed = fields.BooleanField()
+    is_oco_allowed = fields.BooleanField()
+    is_spot_trading_allowed = fields.BooleanField()
+    is_margin_trading_allowed = fields.BooleanField()
+
+    class Meta:
+        unique_together = (('base_asset_name', 'quote_asset_name'), )
 
     def __str__(self):
         return self.name
@@ -54,7 +57,7 @@ class Trade(Model):
     is_buyer_maker = fields.BooleanField()
     is_best_match = fields.BooleanField()
 
-    timestamp = fields.BigIntField()
+    execution_timestamp = fields.BigIntField()
 
     class Meta:
         unique_together = (('symbol', 'number'), )
@@ -75,7 +78,7 @@ class AggTrade(Model):
     is_buyer_maker = fields.BooleanField()
     is_best_match = fields.BooleanField()
 
-    timestamp = fields.BigIntField()
+    execution_timestamp = fields.BigIntField()
 
     class Meta:
         unique_together = (('symbol', 'number'), )

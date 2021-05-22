@@ -11,12 +11,12 @@ class SymbolEtl(BaseEtl):
 
         for symbol in data['symbols']:
             await Symbol.update_or_create(name=symbol['symbol'], defaults={
-                'base_asset': symbol['baseAsset'],
+                'base_asset_name': symbol['baseAsset'],
                 'base_asset_precision': symbol['baseAssetPrecision'],
-                'quote_asset': symbol['quoteAsset'],
+                'quote_asset_name': symbol['quoteAsset'],
                 'quote_asset_precision': symbol['quoteAssetPrecision'],
-                'iceberg_allowed': symbol['icebergAllowed'],
-                'oco_allowed': symbol['ocoAllowed'],
-                'spot_trading_allowed': symbol['isSpotTradingAllowed'],
-                'margin_trading_allowed': symbol['isMarginTradingAllowed']
+                'is_iceberg_allowed': symbol['icebergAllowed'],
+                'is_oco_allowed': symbol['ocoAllowed'],
+                'is_spot_trading_allowed': symbol['isSpotTradingAllowed'],
+                'is_margin_trading_allowed': symbol['isMarginTradingAllowed']
             })
