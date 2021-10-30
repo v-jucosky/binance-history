@@ -13,7 +13,7 @@ pip install --no-cache-dir -r requirements.txt
 Exemplo de uso:
 
 ```shell
-py history [opções] <argumentos>
+py main [opções] <argumentos>
 ```
 
 Opções suportadas:

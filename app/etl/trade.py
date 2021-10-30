@@ -2,9 +2,9 @@ import aiofiles
 
 
 from tortoise.transactions import atomic
-from history.models import Symbol, Trade
 from tortoise.queryset import QuerySet
-from history.etl.base import BaseEtl
+from app.models import Symbol, Trade
+from app.etl.base import BaseEtl
 from zipfile import ZipFile
 from pathlib import Path
 from aiofiles import os
@@ -13,6 +13,16 @@ from aiofiles import os
 class TradeEtl(BaseEtl):
     @atomic()
     async def _load_file(self, file: Path, symbol: Symbol):
+        '''
+        Rotina de carga do arquivo ao banco de dados.
+        Encapsulada em uma transação, de modo que ou o arquivo é totalmente carregado ou nada é alterado.
+
+        Parâmetros
+        ----------
+        file: arquivo a ser carregado
+        symbol: símbolo a utilizar como chave estrangeira
+        '''
+
         trades = []
 
         async with aiofiles.open(file, 'r', encoding='UTF-8') as file:
@@ -37,6 +47,14 @@ class TradeEtl(BaseEtl):
         await Trade.bulk_create(trades, 10000)
 
     async def run(self, symbols: QuerySet):
+        '''
+        Rotina de execução principal.
+
+        Parâmetros
+        ----------
+        symbols: query contendo os símbolos a carregar
+        '''
+
         async for symbol in symbols.all():
             last_trade = await Trade.filter(symbol=symbol).order_by('-execution_timestamp').first()
 
@@ -58,4 +76,4 @@ class TradeEtl(BaseEtl):
                     await os.remove(f'./stage/{file}.zip')
                     await os.remove(f'./stage/{file}.csv')
 
-        self.logger.info('Sincronização das transações concluída')
+        self.logger.info('Trade sync complete')

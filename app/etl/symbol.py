@@ -1,11 +1,13 @@
 from tortoise.transactions import atomic
-from history.etl.base import BaseEtl
-from history.models import Symbol
+from app.etl.base import BaseEtl
+from app.models import Symbol
 
 
 class SymbolEtl(BaseEtl):
     @atomic()
     async def run(self):
+        '''Rotina de execução principal.'''
+
         async with self.api.get('https://api.binance.com/api/v3/exchangeInfo') as response:
             data = await response.json()
 
@@ -20,3 +22,5 @@ class SymbolEtl(BaseEtl):
                 'is_spot_trading_allowed': symbol['isSpotTradingAllowed'],
                 'is_margin_trading_allowed': symbol['isMarginTradingAllowed']
             })
+
+        self.logger.info('Symbol sync complete')

@@ -4,17 +4,17 @@ import getopt
 import sys
 
 
-from history.etl.aggtrade import AggTradeEtl
-from history.session import LoggedSession
 from tortoise import Tortoise, run_async
-from history.etl.symbol import SymbolEtl
-from history.etl.kline import KLineEtl
-from history.etl.trade import TradeEtl
-from history.models import Symbol
+from app.etl.aggtrade import AggTradeEtl
+from app.session import LoggedSession
+from app.etl.symbol import SymbolEtl
+from app.etl.kline import KLineEtl
+from app.etl.trade import TradeEtl
+from app.models import Symbol
 
 
 async def run(symbols: list, arguments: list):
-    await Tortoise.init(config_file='./history/db.json')
+    await Tortoise.init(config_file='./app/db.json')
     await Tortoise.generate_schemas()
 
     tasks = []
@@ -28,7 +28,7 @@ async def run(symbols: list, arguments: list):
             query = Symbol.filter(name__in=symbols)
 
             if not await query.count():
-                logger.warning('Nenhum par encontrado')
+                logger.warning('No pair found')
                 return
 
         else:
@@ -50,7 +50,7 @@ async def run(symbols: list, arguments: list):
             await task
 
 if __name__ == '__main__':
-    logger = logging.getLogger('history')
+    logger = logging.getLogger('app')
     handler = logging.StreamHandler()
     formatter = logging.Formatter('%(asctime)s [%(levelname)s] (%(module)s) %(message)s')
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
     for argument in arguments:
         if argument not in ('kline', 'trade', 'aggtrade'):
-            logger.error(f'Comando inválido: "{argument}"')
+            logger.error(f'Invalid command: "{argument}"')
             exit()
 
     run_async(run(symbols, arguments))
